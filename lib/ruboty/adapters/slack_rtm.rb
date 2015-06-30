@@ -98,8 +98,13 @@ module Ruboty
         channel = channel_info(data['channel'])
 
         if channel
-          return if channel['name'] == 'general' && ENV['SLACK_IGNORE_GENERAL'] == '1'
-          return if ENV['SLACK_IGNORE_CHANNELS'] && ENV['SLACK_IGNORE_CHANNELS'].include? channel['name']
+          if ENV['SLACK_IGNORE_GENERAL'] == '1'
+            return if channel['name'] == 'general'
+          end
+
+          if ENV['SLACK_IGNORE_CHANNELS']
+            return if ENV['SLACK_IGNORE_CHANNELS'].split(",").include?(channel['name'])
+          end
 
           channel_to = expose_channel_name? ? "##{channel['name']}" : channel['id']
         else # direct message
